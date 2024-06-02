@@ -166,4 +166,17 @@ class Collection {
     }, $this->data);
   }
 
+  /**
+   * Returns the elements in the $this->data property as an array.
+   *
+   * @return array The array containing the converted elements from $this->data.
+   */
+  public function toArray() {
+    $array = [];
+    foreach ($this->data as $item) {
+        $array[] = $item->toArray();
+    }
+    return $array;
+  }
+
 }
