@@ -30,6 +30,11 @@ class Client {
   protected $client_id;
 
   /**
+   * @var string|null
+   */
+  protected $shared_secret;
+
+  /**
    * @var array
    */
   protected $request_headers = [];
@@ -48,15 +53,18 @@ class Client {
    * Create a new instance of Client.
    *
    * @param string $client_id
+   * @param string|null $shared_secret
    * @return void
    */
   public function __construct(
-    string $client_id
+    string $client_id,
+    string $shared_secret = null
   ) {
     if(is_null($client_id) || !trim($client_id)) {
       throw new OAuthException("No client ID found. A valid client ID is required.");
     }
     $this->client_id = $client_id;
+    $this->shared_secret = $shared_secret;
   }
 
   /**
@@ -85,8 +93,12 @@ class Client {
    * @return void
    */
   public function setApiKey($api_key = null) {
+    $api_key_header = $this->client_id;
+    if ($this->shared_secret) {
+      $api_key_header .= ":{$this->shared_secret}";
+    }
     $headers = [
-      'x-api-key' => $this->client_id
+      'x-api-key' => $api_key_header
     ];
     if ($api_key) {
       $headers['Authorization'] = "Bearer {$api_key}";
